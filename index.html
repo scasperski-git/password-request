@@ -12,7 +12,7 @@ body {
   padding: 20px;
 }
 .container {
-  max-width: 400px;
+  max-width: 420px;
   margin: auto;
   background: #ffffff;
   padding: 20px;
@@ -26,13 +26,20 @@ h2 {
 label {
   font-weight: bold;
 }
-input {
+input[type="text"] {
   width: 100%;
   padding: 10px;
   margin-top: 5px;
   margin-bottom: 15px;
   border: 1px solid #ccc;
   border-radius: 5px;
+}
+.consent {
+  font-size: 13px;
+  margin-bottom: 15px;
+}
+.consent input {
+  margin-right: 5px;
 }
 button {
   width: 100%;
@@ -42,10 +49,12 @@ button {
   border: none;
   border-radius: 5px;
   font-size: 16px;
-  cursor: pointer;
+  cursor: not-allowed;
+  opacity: 0.6;
 }
-button:hover {
-  background: #1ebe5d;
+button.enabled {
+  cursor: pointer;
+  opacity: 1;
 }
 .note {
   font-size: 12px;
@@ -71,7 +80,15 @@ button:hover {
     <label>Phone Number</label>
     <input type="text" id="phone" required>
 
-    <button type="submit">Send Request</button>
+    <div class="consent">
+      <input type="checkbox" id="consent" onclick="toggleButton()">
+      <span>
+        By providing the details above, I hereby confirm that I am the authorized
+        recipient to request or to receive this password.
+      </span>
+    </div>
+
+    <button type="submit" id="sendBtn" disabled>Send Request</button>
   </form>
 
   <div class="note">
@@ -80,6 +97,21 @@ button:hover {
 </div>
 
 <script>
+function toggleButton() {
+  var consent = document.getElementById("consent");
+  var btn = document.getElementById("sendBtn");
+
+  if (consent.checked) {
+    btn.disabled = false;
+    btn.classList.add("enabled");
+    btn.style.cursor = "pointer";
+  } else {
+    btn.disabled = true;
+    btn.classList.remove("enabled");
+    btn.style.cursor = "not-allowed";
+  }
+}
+
 function sendWhatsApp() {
   var company = document.getElementById("company").value;
   var director = document.getElementById("director").value;
@@ -88,15 +120,20 @@ function sendWhatsApp() {
   var now = new Date();
   var datetime = now.toLocaleString();
 
+  var consentText =
+    "By providing the details above, I hereby confirm that I am the authorized " +
+    "recipient to request or to receive this password.";
+
   var message =
     "🔐 PASSWORD REQUEST%0A%0A" +
     "Company : " + company + "%0A" +
     "Director: " + director + "%0A" +
     "Phone   : " + phone + "%0A" +
-    "Time    : " + datetime;
+    "Time    : " + datetime + "%0A%0A" +
+    "Consent:%0A" + consentText;
 
-  var whatsappNumber = "60176701984"; // TUKAR NO AWAK
-  var url = "https://wa.me/" + whatsappNumber + "?text=" + message;
+  var whatsappNumber = "60176701984"; // ⬅️ TUKAR NO AWAK
+  var url = "https://wa.me/" + whatsappNumber + "?text=" + encodeURIComponent(message);
 
   window.open(url, "_blank");
 }
