@@ -246,7 +246,7 @@ function logToGoogleSheet(time, company, director, regno, phone, ref, ip, ua, pl
   data.append("platform", platform);
   data.append("lang", lang);
 
-  fetch("https://script.google.com/macros/s/AKfycbwOcJsIGpEfHuvuMfC7LFUs9yJmWNwccDrrX0kNLKz00AZf0n_0DrCh02wXjKQ6Udto/exec", {
+  fetch("https://script.google.com/macros/s/AKfycbzIGe71lP8u4NrzWWe-2x1NkvvN5tKQTB6wY4sqoHKrfcaxUAovz6_dAe0qmUNyMFhb/exec", {
     method: "POST",
     body: data
   });
@@ -255,4 +255,5 @@ function logToGoogleSheet(time, company, director, regno, phone, ref, ip, ua, pl
 
 </body>
 </html>
+
 
