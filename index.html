@@ -59,30 +59,17 @@ button.enabled {
   margin-top: 10px;
 }
 
-/* ===== SUCCESS ===== */
-.successBox {
-  display: none;
+/* ===== STATUS ICON ===== */
+.statusIcon {
   text-align: center;
+  margin-bottom: 15px;
+  animation: fadeIn 0.4s ease;
 }
-.checkmark {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  border: 4px solid #4CAF50;
-  margin: 0 auto 15px;
-  position: relative;
-  animation: pop 0.4s ease-out;
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
-.checkmark svg {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-}
-@keyframes pop {
-  0% { transform: scale(0); }
-  100% { transform: scale(1); }
-}
+
 .ref {
   font-weight: bold;
   margin-top: 10px;
@@ -135,20 +122,19 @@ var IS_SUBMITTED = false;
   <div class="note">Request will be sent via WhatsApp</div>
 </div>
 
-<!-- SUCCESS -->
-<div class="container successBox" id="successBox">
-  <div class="checkmark">
-    <svg width="40" height="30" viewBox="0 0 52 40">
-      <path d="M2 20 L20 38 L50 2"
-        fill="none"
-        stroke="#4CAF50"
-        stroke-width="6"
-        stroke-linecap="round"
-        stroke-linejoin="round"/>
+<!-- SUCCESS / PREPARED -->
+<div class="container" id="successBox" style="display:none;text-align:center;">
+
+  <div class="statusIcon">
+    <svg width="60" height="60" viewBox="0 0 24 24" fill="none">
+      <path d="M6 2h8l4 4v16H6z" stroke="#555" stroke-width="1.5"/>
+      <path d="M14 2v4h4" stroke="#555" stroke-width="1.5"/>
+      <path d="M8 11h8M8 15h8" stroke="#555" stroke-width="1.5"/>
     </svg>
   </div>
 
   <h2>Request Prepared</h2>
+
   <div class="ref" id="refDisplay"></div>
 
   <p style="font-size:12px;color:#666;">
@@ -166,14 +152,12 @@ var IS_SUBMITTED = false;
 <div class="trademark" id="trademark"></div>
 
 <script>
-/* ===== UI ===== */
 function toggleButton() {
   var btn = document.getElementById("sendBtn");
   btn.disabled = !document.getElementById("consent").checked;
   btn.classList.toggle("enabled", !btn.disabled);
 }
 
-/* ===== REF ===== */
 function generateReference() {
   var d = new Date();
   return "JV5-" +
@@ -185,7 +169,6 @@ function generateReference() {
     String(d.getSeconds()).padStart(2,"0");
 }
 
-/* ===== CLIENT INFO ===== */
 async function getClientInfo() {
   let ip = "UNKNOWN";
   try {
@@ -202,7 +185,6 @@ async function getClientInfo() {
   };
 }
 
-/* ===== SUBMIT ===== */
 function validateAndSend() {
   if (IS_SUBMITTED) return false;
 
@@ -262,7 +244,6 @@ async function sendWhatsApp() {
   document.getElementById("refDisplay").innerText = "Reference No: " + ref;
 }
 
-/* ===== LOGGER ===== */
 function logToGoogleSheet(time, company, director, regno, phone, ref, ip, ua, platform, lang) {
 
   const data = new URLSearchParams();
