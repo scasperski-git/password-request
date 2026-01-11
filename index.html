@@ -11,7 +11,7 @@ body {
   background: #f4f6f8;
   padding: 20px;
 }
-.container, .maintenanceBox {
+.container {
   max-width: 420px;
   margin: auto;
   background: #ffffff;
@@ -21,7 +21,6 @@ body {
 }
 h2 {
   text-align: center;
-  margin-bottom: 20px;
 }
 label {
   font-weight: bold;
@@ -29,8 +28,7 @@ label {
 input[type="text"] {
   width: 100%;
   padding: 10px;
-  margin-top: 5px;
-  margin-bottom: 15px;
+  margin: 5px 0 15px;
   border: 1px solid #ccc;
   border-radius: 5px;
   text-transform: uppercase;
@@ -38,9 +36,6 @@ input[type="text"] {
 .consent {
   font-size: 13px;
   margin-bottom: 15px;
-}
-.consent input {
-  margin-right: 5px;
 }
 button {
   width: 100%;
@@ -63,31 +58,52 @@ button.enabled {
   text-align: center;
   margin-top: 10px;
 }
-.maintenanceBox {
+
+/* ===== SUCCESS ANIMATION ===== */
+.successBox {
   display: none;
   text-align: center;
+}
+.checkmark {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  display: inline-block;
+  border: 4px solid #4CAF50;
+  position: relative;
+  animation: scaleIn 0.5s ease;
+}
+.checkmark:after {
+  content: "";
+  position: absolute;
+  left: 22px;
+  top: 38px;
+  width: 20px;
+  height: 40px;
+  border-right: 4px solid #4CAF50;
+  border-bottom: 4px solid #4CAF50;
+  transform: rotate(45deg);
+}
+@keyframes scaleIn {
+  0% { transform: scale(0); }
+  100% { transform: scale(1); }
+}
+.ref {
+  margin-top: 15px;
+  font-weight: bold;
+  color: #333;
 }
 </style>
 
 <script>
-/* ===== MAINTENANCE TOGGLE ===== */
-var MAINTENANCE_MODE = false; // true = OFF | false = ON
+var IS_SUBMITTED = false; // double submit lock
 </script>
 </head>
 
 <body>
 
-<!-- MAINTENANCE MESSAGE -->
-<div id="maintenanceBox" class="maintenanceBox">
-  <h2>🚧 Password Request Temporarily Unavailable</h2>
-  <p>
-    This request link is currently under maintenance.<br>
-    Please contact the system administrator.
-  </p>
-</div>
-
-<!-- MAIN FORM -->
-<div class="container">
+<!-- FORM -->
+<div class="container" id="formBox">
   <h2>🔐 Password Request Batch 5-JV</h2>
 
   <form onsubmit="return validateAndSend();">
@@ -102,104 +118,96 @@ var MAINTENANCE_MODE = false; // true = OFF | false = ON
 
     <div class="consent">
       <input type="checkbox" id="consent" onclick="toggleButton()">
-      <span>
-        By submitting this request, I acknowledge that I am requesting access to a
-        password issued by SINGER (M) SDN BHD / BERJAYA CREDIT SDN BHD and accept full
-        responsibility for its use. Unauthorized access or misuse may result in further
-        action.
-      </span>
+      I confirm this request is authorized.
     </div>
 
     <button type="submit" id="sendBtn" disabled>Send Request</button>
   </form>
 
-  <div class="note">
-    Request will be sent via WhatsApp
-  </div>
+  <div class="note">Request will be sent via WhatsApp</div>
+</div>
+
+<!-- SUCCESS -->
+<div class="container successBox" id="successBox">
+  <div class="checkmark"></div>
+  <h2>Successfully Sent</h2>
+  <div class="ref" id="refDisplay"></div>
+  <p>Please wait for administrator response.</p>
 </div>
 
 <script>
-/* ===== PAGE LOAD HANDLER ===== */
-window.onload = function () {
-  if (MAINTENANCE_MODE) {
-    document.querySelector(".container").style.display = "none";
-    document.getElementById("maintenanceBox").style.display = "block";
-  }
-};
-
-/* ===== FORM LOGIC ===== */
 function toggleButton() {
-  var consent = document.getElementById("consent");
   var btn = document.getElementById("sendBtn");
-
-  if (consent.checked) {
-    btn.disabled = false;
-    btn.classList.add("enabled");
-  } else {
-    btn.disabled = true;
-    btn.classList.remove("enabled");
-  }
+  btn.disabled = !document.getElementById("consent").checked;
+  btn.classList.toggle("enabled", !btn.disabled);
 }
 
 function generateReference() {
-  var now = new Date();
-  var y = now.getFullYear();
-  var m = String(now.getMonth() + 1).padStart(2, '0');
-  var d = String(now.getDate()).padStart(2, '0');
-  var h = String(now.getHours()).padStart(2, '0');
-  var min = String(now.getMinutes()).padStart(2, '0');
-  var s = String(now.getSeconds()).padStart(2, '0');
-
-  return "JV5-" + y + m + d + "-" + h + min + s;
+  var d = new Date();
+  return "JV5-" +
+    d.getFullYear() +
+    String(d.getMonth()+1).padStart(2,"0") +
+    String(d.getDate()).padStart(2,"0") + "-" +
+    String(d.getHours()).padStart(2,"0") +
+    String(d.getMinutes()).padStart(2,"0") +
+    String(d.getSeconds()).padStart(2,"0");
 }
 
 function validateAndSend() {
-  if (!document.getElementById("consent").checked) {
-    alert("Please confirm authorization before sending.");
-    return false;
-  }
+  if (IS_SUBMITTED) return false;
+  if (!document.getElementById("consent").checked) return false;
+
+  IS_SUBMITTED = true;
+  document.getElementById("sendBtn").innerText = "Sending...";
+  document.getElementById("sendBtn").disabled = true;
+
   sendWhatsApp();
   return false;
 }
 
 function sendWhatsApp() {
-  var company = document.getElementById("company").value.toUpperCase();
+  var company = companyVal = document.getElementById("company").value.toUpperCase();
   var director = document.getElementById("director").value.toUpperCase();
   var regno = document.getElementById("regno").value.toUpperCase();
-
-  var now = new Date();
-  var datetime = now.toLocaleString();
   var ref = generateReference();
+  var time = new Date().toLocaleString();
 
-  var message =
-    "🔐 PASSWORD REQUEST BATCH 5-JV\n" +
-    "Time : " + datetime + "\n\n" +
-    "Company Name : " + company + "\n" +
-    "Director Name : " + director + "\n" +
-    "Company Reg. No : " + regno + "\n\n" +
-    "Consent:\n" +
-    "By submitting this request, I acknowledge that I am requesting access to a " +
-    "password issued by SINGER (M) SDN BHD / BERJAYA CREDIT SDN BHD and accept full " +
-    "responsibility for its use. Unauthorized access or misuse may result in further " +
-    "action.\n\n" +
+  var msg =
+    "🔐 PASSWORD REQUEST BATCH 5-JV\n\n" +
+    "Time: " + time + "\n" +
+    "Company: " + company + "\n" +
+    "Director: " + director + "\n" +
+    "Reg No: " + regno + "\n\n" +
+    "Ref No: " + ref;
 
-    "Ref.No: " + ref;
+  window.open(
+    "https://wa.me/60176701984?text=" + encodeURIComponent(msg),
+    "_blank"
+  );
 
-  var whatsappNumber = "60176701984"; // ⬅️ TUKAR NO AWAK
-  var url = "https://wa.me/" + whatsappNumber + "?text=" + encodeURIComponent(message);
+  logToGoogleSheet(time, company, director, regno, ref);
 
-  window.open(url, "_blank");
+  document.getElementById("formBox").style.display = "none";
+  document.getElementById("successBox").style.display = "block";
+  document.getElementById("refDisplay").innerText = "Reference No: " + ref;
+}
+
+/* ===== GOOGLE SHEET LOGGER ===== */
+function logToGoogleSheet(time, company, director, regno, ref) {
+  fetch("1VlwDgR-arLLoyVz6SZsIZ-ZKluy41i1BerqM9foQQxs", {
+    method: "POST",
+    mode: "no-cors",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      time: time,
+      company: company,
+      director: director,
+      regno: regno,
+      ref: ref
+    })
+  });
 }
 </script>
 
 </body>
 </html>
-
-
-
-
-
-
-
-
-
