@@ -86,10 +86,20 @@ button.enabled {
 
 <script>
 var IS_SUBMITTED = false;
+var MAINTENANCE_MODE = false; // false = ON | true = OFF
 </script>
 </head>
 
 <body>
+
+<!-- MAINTENANCE -->
+<div class="container" id="maintenanceBox" style="display:none;text-align:center;">
+  <h2>🚧 Temporarily Unavailable</h2>
+  <p>
+    This request link is currently unavailable.<br><br>
+    Please contact the administrator.
+  </p>
+</div>
 
 <!-- FORM -->
 <div class="container" id="formBox">
@@ -122,7 +132,7 @@ var IS_SUBMITTED = false;
   <div class="note">Request will be sent via WhatsApp</div>
 </div>
 
-<!-- SUCCESS / PREPARED -->
+<!-- REQUEST PREPARED -->
 <div class="container" id="successBox" style="display:none;text-align:center;">
 
   <div class="statusIcon">
@@ -152,12 +162,23 @@ var IS_SUBMITTED = false;
 <div class="trademark" id="trademark"></div>
 
 <script>
+/* ===== PAGE LOAD ===== */
+window.onload = function () {
+  if (MAINTENANCE_MODE) {
+    document.getElementById("formBox").style.display = "none";
+    document.getElementById("successBox").style.display = "none";
+    document.getElementById("maintenanceBox").style.display = "block";
+  }
+};
+
+/* ===== UI ===== */
 function toggleButton() {
   var btn = document.getElementById("sendBtn");
   btn.disabled = !document.getElementById("consent").checked;
   btn.classList.toggle("enabled", !btn.disabled);
 }
 
+/* ===== REF ===== */
 function generateReference() {
   var d = new Date();
   return "JV5-" +
@@ -169,6 +190,7 @@ function generateReference() {
     String(d.getSeconds()).padStart(2,"0");
 }
 
+/* ===== CLIENT INFO ===== */
 async function getClientInfo() {
   let ip = "UNKNOWN";
   try {
@@ -185,6 +207,7 @@ async function getClientInfo() {
   };
 }
 
+/* ===== SUBMIT ===== */
 function validateAndSend() {
   if (IS_SUBMITTED) return false;
 
@@ -244,6 +267,7 @@ async function sendWhatsApp() {
   document.getElementById("refDisplay").innerText = "Reference No: " + ref;
 }
 
+/* ===== LOGGER ===== */
 function logToGoogleSheet(time, company, director, regno, phone, ref, ip, ua, platform, lang) {
 
   const data = new URLSearchParams();
