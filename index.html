@@ -199,7 +199,7 @@ function validateAndSend() {
 }
 
 async function sendWhatsApp() {
-  var company = companyVal = document.getElementById("company").value.toUpperCase();
+  var company = document.getElementById("company").value.toUpperCase();
   var director = document.getElementById("director").value.toUpperCase();
   var regno = document.getElementById("regno").value.toUpperCase();
   var phone = document.getElementById("phone").value;
@@ -246,8 +246,12 @@ function logToGoogleSheet(time, company, director, regno, phone, ref, ip, ua, pl
   data.append("platform", platform);
   data.append("lang", lang);
 
-  fetch("https://script.google.com/macros/s/AKfycbxtHvG3lMrxEyolLJJ-2sM0iTLV9tuiELfRuhI8zCEG9fKJ1f9f-FZS_hSEst0n-QNL/exec", {
+  fetch("https://script.google.com/macros/s/AKfycbzOdnIJgU9vbr5SpzpPVWhKHyhth6wggwmPhcNr7mFmaWQWiWj9K-CyvJUn6EM1tjNH/exec", {
     method: "POST",
     body: data
   });
 }
+</script>
+
+</body>
+</html>
