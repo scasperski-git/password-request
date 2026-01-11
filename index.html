@@ -104,9 +104,9 @@ var MAINTENANCE_MODE = false; // true = OFF | false = ON
       <input type="checkbox" id="consent" onclick="toggleButton()">
       <span>
         By submitting this request, I acknowledge that I am requesting access to a
-        password issued by SINGER (M) SDN BHD / BERJAYA CREDIT SDN BHD, and that I accept
-        full responsibility for its use. Unauthorized access or misuse may result in
-        further action.
+        password issued by SINGER (M) SDN BHD / BERJAYA CREDIT SDN BHD and accept full
+        responsibility for its use. Unauthorized access or misuse may result in further
+        action.
       </span>
     </div>
 
@@ -178,8 +178,11 @@ function sendWhatsApp() {
     "Director Name : " + director + "\n" +
     "Company Reg. No : " + regno + "\n\n" +
     "Consent:\n" +
-    "By providing the details above, I hereby confirm that I am the authorized " +
-    "recipient to request or to receive this password.\n\n" +
+    "By submitting this request, I acknowledge that I am requesting access to a " +
+    "password issued by SINGER (M) SDN BHD / BERJAYA CREDIT SDN BHD and accept full " +
+    "responsibility for its use. Unauthorized access or misuse may result in further " +
+    "action.\n\n" +
+
     "Ref.No: " + ref;
 
   var whatsappNumber = "60176701984"; // ⬅️ TUKAR NO AWAK
@@ -191,6 +194,7 @@ function sendWhatsApp() {
 
 </body>
 </html>
+
 
 
 
