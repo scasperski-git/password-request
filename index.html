@@ -233,17 +233,22 @@ async function sendWhatsApp() {
 }
 
 function logToGoogleSheet(time, company, director, regno, phone, ref, ip, ua, platform, lang) {
-  fetch("https://script.google.com/macros/s/AKfycbxJleBoGh9yGS8u7hQ6cr7WyDvEX3ekxVlZadftijaGL1ZvzQQ0L-9KE9H6rGypdgaE/exec", {
+
+  const data = new URLSearchParams();
+  data.append("time", time);
+  data.append("company", company);
+  data.append("director", director);
+  data.append("regno", regno);
+  data.append("phone", phone);
+  data.append("ref", ref);
+  data.append("ip", ip);
+  data.append("ua", ua);
+  data.append("platform", platform);
+  data.append("lang", lang);
+
+  fetch("https://script.google.com/macros/s/AKfycby_77tU9eV7RxiOsslUeYWhDlA9Va_tX6DZns3gk9lfCRN6QEOUIf-dhi7OmPkt6zFS/exec", {
     method: "POST",
-    mode: "no-cors",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      time, company, director, regno, phone, ref,
-      ip, ua, platform, lang
-    })
+    body: data
   });
 }
-</script>
 
-</body>
-</html>
