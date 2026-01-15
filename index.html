@@ -312,7 +312,19 @@ function sendWhatsApp() {
       return;
     }
 
-    var msg="🔐 PASSWORD REQUEST BATCH 5-JV\n\nTime: "+time+"\n\nCompany: "+company+"\nDirector: "+director+"\nReg No: "+regno+"\nContact: "+phone+"\n\nRef No: "+ref;
+var msg =
+"🔐 PASSWORD REQUEST BATCH 5-JV\n\n" +
+"Time: " + time + "\n\n" +
+"Company: " + company + "\n" +
+"Director: " + director + "\n" +
+"Reg No: " + regno + "\n" +
+"Contact No: " + phone + "\n\n" +
+"CONSENT:\n" +
+"I acknowledge that I am requesting access to a password issued by\n" +
+"SINGER (M) SDN BHD / BERJAYA CREDIT SDN BHD and accept full responsibility\n" +
+"for its use.\n\n" +
+"Ref No: " + ref;
+
     window.open("https://wa.me/60176701984?text="+encodeURIComponent(msg),"_blank");
 
 document.getElementById("formBox").style.display="none";
@@ -346,4 +358,5 @@ function phoneVal(){return document.getElementById("phone").value.trim();}
 
 </body>
 </html>
+
 
