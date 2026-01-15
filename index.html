@@ -453,12 +453,15 @@ function regnoVal(){return document.getElementById("regno").value.trim().toUpper
 function phoneVal(){return document.getElementById("phone").value.trim();}
 
 (function(){
-  document.getElementById("trademark").innerText="© "+new Date().getFullYear()+" · Authorized Access Only";
+  const year=new Date().getFullYear();
+  trademark.innerHTML=
+    `© ${year} <a href="https://sczpnet.org" target="_blank">sczpnet.org</a> · Authorized Access Only";
 })();
 </script>
 
 </body>
 </html>
+
 
 
 
