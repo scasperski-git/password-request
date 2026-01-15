@@ -175,6 +175,27 @@ button.enabled {
 <script>
 var IS_SUBMITTED = false;
 
+// REAL-TIME PHONE VALIDATION
+document.getElementById("phone").addEventListener("input", function () {
+
+  var phone = this.value.trim();
+  var err = document.getElementById("errPhone");
+
+  // kosong → jangan kacau (submit akan handle)
+  if (phone === "") {
+    err.style.display = "none";
+    return;
+  }
+
+  // kalau first char bukan 0 → terus warning
+  if (!phone.startsWith("0")) {
+    err.innerText = "Phone number must start with 0";
+    err.style.display = "block";
+  } else {
+    err.style.display = "none";
+  }
+});
+
 function toggleButton() {
   var btn = document.getElementById("sendBtn");
   btn.disabled = !document.getElementById("consent").checked;
@@ -275,3 +296,4 @@ function phoneVal(){return document.getElementById("phone").value.trim();}
 
 </body>
 </html>
+
