@@ -159,7 +159,31 @@ button.enabled {
 </div>
 
 <!-- SUCCESS -->
-<div class="container" id="successBox" style="display:none;text-align:center;">
+<div class="container" id="successBox" style="display:none;">
+  <div class="statusIcon" style="text-align:center;">📄</div>
+  <h2 style="text-align:center;">Request Prepared</h2>
+
+  <!-- SUMMARY BOX -->
+  <div id="summaryBox" style="
+    border:1px solid #ddd;
+    border-radius:8px;
+    padding:15px;
+    font-size:13px;
+    margin-top:15px;
+    background:#fafafa;
+  "></div>
+
+  <p style="font-size:12px;color:#666;text-align:center;margin-top:10px;">
+    Reference number is for tracking purposes only.
+  </p>
+
+  <p style="text-align:center;">
+    WhatsApp has been opened with your request details.<br><br>
+    <b>Please tap “Send” in WhatsApp to complete this request.</b><br><br>
+    After sending, you may safely close this page.
+  </p>
+</div>
+
   <div class="statusIcon">📄</div>
   <h2>Request Prepared</h2>
   <div class="ref" id="refDisplay"></div>
@@ -295,15 +319,23 @@ function sendWhatsApp() {
         "_blank"
       );
 
-      document.getElementById("formBox").style.display="none";
-      document.getElementById("successBox").style.display="block";
-      document.getElementById("refDisplay").innerText="Reference No: "+ref;
-      showOverlay(false);
-    })
-    .catch(()=>{
-      alert("Network error. Please try again.");
-      IS_SUBMITTED=false;
-      showOverlay(false);
+var consentText =
+  "By submitting this request, I acknowledge that I am requesting access to a " +
+  "password issued by SINGER (M) SDN BHD / BERJAYA CREDIT SDN BHD and accept full " +
+  "responsibility for its use. Unauthorized access or misuse may result in further action.";
+
+document.getElementById("summaryBox").innerHTML =
+  "<b>Company Name:</b> " + company + "<br><br>" +
+  "<b>Director Name:</b> " + director + "<br><br>" +
+  "<b>Company Reg. No:</b> " + regno + "<br><br>" +
+  "<b>Contact No:</b> " + phone + "<br><br>" +
+  "<b>Reference No:</b> " + ref + "<br><hr>" +
+  "<b>Consent:</b><br>" + consentText;
+
+document.getElementById("formBox").style.display = "none";
+document.getElementById("successBox").style.display = "block";
+showOverlay(false);
+
     });
 }
 
@@ -321,4 +353,5 @@ function phoneVal(){ return document.getElementById("phone").value.trim(); }
 
 </body>
 </html>
+
 
