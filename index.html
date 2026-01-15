@@ -317,12 +317,13 @@ button.enabled:hover{
 
 
 <div class="trademark">
-  © <span id="year"></span> · 
+  © <span id="year"></span>
+  Powered by
   <a href="https://sczpnet.org" target="_blank" rel="noopener">
     sczpnet.org
   </a>
+  · Internal Use Only ·
 </div>
-
 
 <script>
 var IS_SUBMITTED = false;
@@ -459,13 +460,14 @@ function regnoVal(){return document.getElementById("regno").value.trim().toUpper
 function phoneVal(){return document.getElementById("phone").value.trim();}
 
 (function(){
-  document.getElementById("year").innerText = new Date().getFullYear();+" · Authorized Access Only";
+  document.getElementById("year").innerText = new Date().getFullYear();
 })();
 
 </script>
 
 </body>
 </html>
+
 
 
 
