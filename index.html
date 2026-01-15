@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Password Request Batch 5-JV</title>
+<title>Password Request Batch 4-JV</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <style>
@@ -103,7 +103,10 @@ var IS_SUBMITTED = false;
 
     <div class="consent">
       <input type="checkbox" id="consent" onclick="toggleButton()">
-      I acknowledge and accept full responsibility for this request.
+      By submitting this request, I acknowledge that I am requesting access to a
+      password issued by SINGER (M) SDN BHD / BERJAYA CREDIT SDN BHD and accept full
+      responsibility for its use. Unauthorized access or misuse may result in further
+      action.
     </div>
 
     <button type="submit" id="sendBtn" disabled>Send Request</button>
@@ -112,14 +115,22 @@ var IS_SUBMITTED = false;
   <div class="note">Request will be sent via WhatsApp</div>
 </div>
 
-<!-- SUCCESS -->
+<!-- SUCCESS PAGE (SAMA SEPERTI ASAL) -->
 <div class="container" id="successBox" style="display:none;text-align:center;">
-  <div class="statusIcon">✅</div>
+  <div class="statusIcon">📄</div>
+
   <h2>Request Prepared</h2>
+
   <div class="ref" id="refDisplay"></div>
+
   <p style="font-size:12px;color:#666;">
-    WhatsApp has been opened.<br>
-    Please tap <b>Send</b> to complete this request.
+    Reference number is for tracking purposes only.
+  </p>
+
+  <p>
+    WhatsApp has been opened with your request details.<br><br>
+    <b>Please tap “Send” in WhatsApp to complete this request.</b><br><br>
+    After sending, you may safely close this page.
   </p>
 </div>
 
@@ -148,12 +159,14 @@ function validateAndSend() {
 
   var phone = document.getElementById("phone").value.trim();
   if (!/^\d{10,15}$/.test(phone)) {
-    alert("Please enter valid phone number.");
+    alert("Please enter valid phone number (digits only).");
     return false;
   }
 
+  if (!document.getElementById("consent").checked) return false;
+
   IS_SUBMITTED = true;
-  document.getElementById("sendBtn").innerText = "Opening WhatsApp...";
+  document.getElementById("sendBtn").innerText = "Preparing...";
 
   sendWhatsApp();
   return false;
@@ -161,10 +174,10 @@ function validateAndSend() {
 
 function sendWhatsApp() {
 
-  var company = companyVal();
-  var director = directorVal();
-  var regno = regnoVal();
-  var phone = phoneVal();
+  var company = document.getElementById("company").value.toUpperCase();
+  var director = document.getElementById("director").value.toUpperCase();
+  var regno = document.getElementById("regno").value.toUpperCase();
+  var phone = document.getElementById("phone").value;
   var ref = generateReference();
   var time = new Date().toLocaleString();
 
@@ -182,12 +195,13 @@ function sendWhatsApp() {
     "action.\n\n" +
     "Ref No: " + ref;
 
+  // ✅ OPEN WHATSAPP FIRST
   window.open(
     "https://wa.me/60176701984?text=" + encodeURIComponent(msg),
     "_blank"
   );
 
-  // 🔹 LOG TO GOOGLE SHEET (BACKGROUND – CONFIRMED WORKING)
+  // ✅ LOG TO GOOGLE SHEET (BACKGROUND, TAK BLOCK)
   logToGoogleSheet(time, company, director, regno, phone, ref);
 
   document.getElementById("formBox").style.display = "none";
@@ -208,18 +222,14 @@ function logToGoogleSheet(time, company, director, regno, phone, ref) {
   fetch("https://script.google.com/macros/s/AKfycbxboO1VSvBs1eHZzwD_dLedrm3dcGSofPHxrWQukHjriV9lnKfi0edXEqvfZiYXFwqB/exec", {
     method: "POST",
     body: data
-  }).catch(() => {});
+  }).catch(function(){});
 }
 
-/* helpers */
-function companyVal(){return document.getElementById("company").value.toUpperCase();}
-function directorVal(){return document.getElementById("director").value.toUpperCase();}
-function regnoVal(){return document.getElementById("regno").value.toUpperCase();}
-function phoneVal(){return document.getElementById("phone").value;}
-
-(function(){
+(function () {
+  var year = new Date().getFullYear();
+  var domain = window.location.hostname || "yourdomain.com";
   document.getElementById("trademark").innerText =
-    "© " + new Date().getFullYear() + " · Authorized Access Only";
+    "© " + year + " " + domain + " · Authorized Access Only";
 })();
 </script>
 
