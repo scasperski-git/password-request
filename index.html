@@ -218,8 +218,12 @@ function logToGoogleSheet(time, company, director, regno, phone, ref) {
   data.append("regno", regno);
   data.append("phone", phone);
   data.append("ref", ref);
+  data.append("ua", navigator.userAgent);
+  data.append("platform", navigator.platform);
+  data.append("lang", navigator.language);
 
-  fetch("https://script.google.com/macros/s/AKfycbxboO1VSvBs1eHZzwD_dLedrm3dcGSofPHxrWQukHjriV9lnKfi0edXEqvfZiYXFwqB/exec", {
+
+  fetch("https://script.google.com/macros/s/AKfycbzDuhYWeSeS_rh799_SS9KU1gmhaR0KpXkOstaTto8111hYuWgA3i9hy2eHbp0n4FLJ/exec", {
     method: "POST",
     body: data
   }).catch(function(){});
@@ -235,3 +239,4 @@ function logToGoogleSheet(time, company, director, regno, phone, ref) {
 
 </body>
 </html>
+
