@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Password Request Batch 4-JV</title>
+<title>Password Request Batch 5-JV</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <style>
@@ -59,15 +59,9 @@ button.enabled {
   margin-top: 10px;
 }
 
-/* ===== STATUS ICON ===== */
 .statusIcon {
   text-align: center;
   margin-bottom: 15px;
-  animation: fadeIn 0.4s ease;
-}
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
 }
 
 .ref {
@@ -75,7 +69,6 @@ button.enabled {
   margin-top: 10px;
 }
 
-/* ===== TRADEMARK ===== */
 .trademark {
   text-align: center;
   font-size: 11px;
@@ -86,20 +79,10 @@ button.enabled {
 
 <script>
 var IS_SUBMITTED = false;
-var MAINTENANCE_MODE = false; // false = ON | true = OFF
 </script>
 </head>
 
 <body>
-
-<!-- MAINTENANCE -->
-<div class="container" id="maintenanceBox" style="display:none;text-align:center;">
-  <h2>🚧 Temporarily Unavailable</h2>
-  <p>
-    This request link is currently unavailable.<br><br>
-    Please contact the administrator.
-  </p>
-</div>
 
 <!-- FORM -->
 <div class="container" id="formBox">
@@ -115,15 +98,12 @@ var MAINTENANCE_MODE = false; // false = ON | true = OFF
     <label>Company Reg. No</label>
     <input type="text" id="regno" required>
 
-    <label>Contact No (For record purpose)</label>
+    <label>Contact No</label>
     <input type="tel" id="phone" placeholder="e.g. 0123456789" required>
 
     <div class="consent">
       <input type="checkbox" id="consent" onclick="toggleButton()">
-      By submitting this request, I acknowledge that I am requesting access to a
-      password issued by SINGER (M) SDN BHD / BERJAYA CREDIT SDN BHD and accept full
-      responsibility for its use. Unauthorized access or misuse may result in further
-      action.
+      I acknowledge and accept full responsibility for this request.
     </div>
 
     <button type="submit" id="sendBtn" disabled>Send Request</button>
@@ -132,53 +112,26 @@ var MAINTENANCE_MODE = false; // false = ON | true = OFF
   <div class="note">Request will be sent via WhatsApp</div>
 </div>
 
-<!-- REQUEST PREPARED -->
+<!-- SUCCESS -->
 <div class="container" id="successBox" style="display:none;text-align:center;">
-
-  <div class="statusIcon">
-    <svg width="60" height="60" viewBox="0 0 24 24" fill="none">
-      <path d="M6 2h8l4 4v16H6z" stroke="#555" stroke-width="1.5"/>
-      <path d="M14 2v4h4" stroke="#555" stroke-width="1.5"/>
-      <path d="M8 11h8M8 15h8" stroke="#555" stroke-width="1.5"/>
-    </svg>
-  </div>
-
+  <div class="statusIcon">✅</div>
   <h2>Request Prepared</h2>
-
   <div class="ref" id="refDisplay"></div>
-
   <p style="font-size:12px;color:#666;">
-    Reference number is for tracking purposes only.
-  </p>
-
-  <p>
-    WhatsApp has been opened with your request details.<br><br>
-    <b>Please tap “Send” in WhatsApp to complete this request.</b><br><br>
-    After sending, you may safely close this page.
+    WhatsApp has been opened.<br>
+    Please tap <b>Send</b> to complete this request.
   </p>
 </div>
 
-<!-- TRADEMARK -->
 <div class="trademark" id="trademark"></div>
 
 <script>
-/* ===== PAGE LOAD ===== */
-window.onload = function () {
-  if (MAINTENANCE_MODE) {
-    document.getElementById("formBox").style.display = "none";
-    document.getElementById("successBox").style.display = "none";
-    document.getElementById("maintenanceBox").style.display = "block";
-  }
-};
-
-/* ===== UI ===== */
 function toggleButton() {
   var btn = document.getElementById("sendBtn");
   btn.disabled = !document.getElementById("consent").checked;
   btn.classList.toggle("enabled", !btn.disabled);
 }
 
-/* ===== REF ===== */
 function generateReference() {
   var d = new Date();
   return "JV5-" +
@@ -190,121 +143,85 @@ function generateReference() {
     String(d.getSeconds()).padStart(2,"0");
 }
 
-/* ===== CLIENT INFO ===== */
-async function getClientInfo() {
-  let ip = "UNKNOWN";
-  try {
-    const r = await fetch("https://api.ipify.org?format=json");
-    const j = await r.json();
-    ip = j.ip;
-  } catch(e){}
-
-  return {
-    ip: ip,
-    ua: navigator.userAgent,
-    platform: navigator.platform,
-    lang: navigator.language
-  };
-}
-
-/* ===== SUBMIT ===== */
 function validateAndSend() {
   if (IS_SUBMITTED) return false;
 
   var phone = document.getElementById("phone").value.trim();
   if (!/^\d{10,15}$/.test(phone)) {
-    alert("Please enter valid phone number (digits only).");
+    alert("Please enter valid phone number.");
     return false;
   }
 
-  if (!document.getElementById("consent").checked) return false;
-
   IS_SUBMITTED = true;
-  var btn = document.getElementById("sendBtn");
-  btn.disabled = true;
-btn.innerText = "Opening WhatsApp...";
-sendWhatsApp();
+  document.getElementById("sendBtn").innerText = "Opening WhatsApp...";
+
+  sendWhatsApp();
   return false;
 }
 
-async function sendWhatsApp() {
+function sendWhatsApp() {
 
-  try {
-    var company = document.getElementById("company").value.toUpperCase();
-    var director = document.getElementById("director").value.toUpperCase();
-    var regno = document.getElementById("regno").value.toUpperCase();
-    var phone = document.getElementById("phone").value;
-    var ref = generateReference();
-    var time = new Date().toLocaleString();
+  var company = companyVal();
+  var director = directorVal();
+  var regno = regnoVal();
+  var phone = phoneVal();
+  var ref = generateReference();
+  var time = new Date().toLocaleString();
 
-    var msg =
-      "🔐 PASSWORD REQUEST BATCH 5-JV\n\n" +
-      "Time: " + time + "\n\n" +
-      "Company: " + company + "\n" +
-      "Director: " + director + "\n" +
-      "Reg No: " + regno + "\n" +
-      "Contact: " + phone + "\n\n" +
-      "Ref No: " + ref;
+  var msg =
+    "🔐 PASSWORD REQUEST BATCH 5-JV\n\n" +
+    "Time: " + time + "\n\n" +
+    "Company: " + company + "\n" +
+    "Director: " + director + "\n" +
+    "Reg No: " + regno + "\n" +
+    "Contact: " + phone + "\n\n" +
+    "Consent:\n" +
+    "By submitting this request, I acknowledge that I am requesting access to a " +
+    "password issued by SINGER (M) SDN BHD / BERJAYA CREDIT SDN BHD and accept full " +
+    "responsibility for its use. Unauthorized access or misuse may result in further " +
+    "action.\n\n" +
+    "Ref No: " + ref;
 
-    // 👉 TRY buka WhatsApp
-    window.open(
-      "https://wa.me/60176701984?text=" + encodeURIComponent(msg),
-      "_blank"
-    );
+  window.open(
+    "https://wa.me/60176701984?text=" + encodeURIComponent(msg),
+    "_blank"
+  );
 
-  } catch (e) {
+  // 🔹 LOG TO GOOGLE SHEET (BACKGROUND – CONFIRMED WORKING)
+  logToGoogleSheet(time, company, director, regno, phone, ref);
 
-    // ❌ Kalau gagal
-    alert("Unable to open WhatsApp. Please try again.");
-
-    IS_SUBMITTED = false;
-    var btn = document.getElementById("sendBtn");
-    btn.innerText = "Send Request";
-    btn.disabled = false;
-
-    return; // STOP
-  }
-
-  // ✅ WALAU APA PUN JADI, PAGE TERUS SAMBUNG
   document.getElementById("formBox").style.display = "none";
   document.getElementById("successBox").style.display = "block";
   document.getElementById("refDisplay").innerText = "Reference No: " + ref;
 }
 
-/* ===== LOGGER ===== */
-function logToGoogleSheet(time, company, director, regno, phone, ref, ip, ua, platform, lang) {
+function logToGoogleSheet(time, company, director, regno, phone, ref) {
 
-  const data = new URLSearchParams();
+  var data = new FormData();
   data.append("time", time);
   data.append("company", company);
   data.append("director", director);
   data.append("regno", regno);
   data.append("phone", phone);
   data.append("ref", ref);
-  data.append("ip", ip);
-  data.append("ua", ua);
-  data.append("platform", platform);
-  data.append("lang", lang);
 
   fetch("https://script.google.com/macros/s/AKfycbxboO1VSvBs1eHZzwD_dLedrm3dcGSofPHxrWQukHjriV9lnKfi0edXEqvfZiYXFwqB/exec", {
     method: "POST",
     body: data
-  });
+  }).catch(() => {});
 }
 
-/* ===== TRADEMARK AUTO ===== */
-(function () {
-  var year = new Date().getFullYear();
-  var domain = window.location.hostname || "yourdomain.com";
+/* helpers */
+function companyVal(){return document.getElementById("company").value.toUpperCase();}
+function directorVal(){return document.getElementById("director").value.toUpperCase();}
+function regnoVal(){return document.getElementById("regno").value.toUpperCase();}
+function phoneVal(){return document.getElementById("phone").value;}
+
+(function(){
   document.getElementById("trademark").innerText =
-    "© " + year + " " + domain + " · Authorized Access Only";
+    "© " + new Date().getFullYear() + " · Authorized Access Only";
 })();
 </script>
 
 </body>
 </html>
-
-
-
-
-
