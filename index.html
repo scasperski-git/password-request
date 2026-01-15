@@ -333,23 +333,53 @@ var IS_SUBMITTED = false;
 // REAL-TIME PHONE VALIDATION
 document.getElementById("phone").addEventListener("input", function () {
 
-  var phone = this.value.trim();
-  var err = document.getElementById("errPhone");
+  let raw = this.value.replace(/\D/g, "");
+  let err = document.getElementById("errPhone");
 
-  // kosong → jangan kacau (submit akan handle)
-  if (phone === "") {
+  if (raw === "") {
     err.style.display = "none";
+    this.value = "";
     return;
   }
 
-  // kalau first char bukan 0 → terus warning
-  if (!phone.startsWith("0")) {
-    err.innerText = "Phone number must start with 0";
+  if (!raw.startsWith("0")) {
+    err.innerText = "Number must start with 0";
     err.style.display = "block";
   } else {
     err.style.display = "none";
   }
+
+  // limit max 11 digit
+  if (raw.length > 11) raw = raw.slice(0,11);
+
+  let formatted = raw;
+
+  // ===== MOBILE =====
+  if (raw.startsWith("01")) {
+    if (raw.length > 3) {
+      formatted = raw.slice(0,3) + "-" + raw.slice(3);
+    }
+  }
+
+  // ===== LANDLINE (02–09 except 01) =====
+  else {
+    if (raw.length >= 3) {
+      // 2-digit area code (03,04,05,06,07,09)
+      if (["03","04","05","06","07","09"].includes(raw.slice(0,2))) {
+        if (raw.length > 2) {
+          formatted = raw.slice(0,2) + "-" + raw.slice(2);
+        }
+      }
+      // fallback safety
+      else if (raw.length > 3) {
+        formatted = raw.slice(0,3) + "-" + raw.slice(3);
+      }
+    }
+  }
+
+  this.value = formatted;
 });
+
 
 function toggleButton() {
   var btn = document.getElementById("sendBtn");
@@ -469,6 +499,7 @@ function phoneVal(){return document.getElementById("phone").value.trim();}
 
 </body>
 </html>
+
 
 
 
