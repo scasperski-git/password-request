@@ -6,130 +6,318 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <style>
-body{font-family:Arial,sans-serif;background:#f4f6f8;padding:20px}
-.container{max-width:420px;margin:auto;background:#fff;padding:20px;border-radius:8px;box-shadow:0 0 10px rgba(0,0,0,.1);position:relative}
-.blur{filter:blur(3px);pointer-events:none}
-label{font-weight:bold}
-input{width:100%;padding:10px;margin:5px 0;border:1px solid #ccc;border-radius:5px;text-transform:uppercase}
-input.invalid{border-color:#d93025}
-.error{color:#d93025;font-size:12px;display:none;margin-bottom:8px}
-button{width:100%;padding:12px;background:#25D366;color:#fff;border:none;border-radius:5px;font-size:16px;opacity:.6}
-button.enabled{opacity:1;cursor:pointer}
-#overlay{position:fixed;inset:0;background:rgba(255,255,255,.75);display:none;align-items:center;justify-content:center;z-index:999}
-.spinner{border:4px solid #ddd;border-top:4px solid #25D366;border-radius:50%;width:40px;height:40px;animation:spin 1s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
-.summaryBox{border:1px solid #ddd;border-radius:6px;padding:12px;text-align:left;font-size:13px}
-.trademark{text-align:center;font-size:11px;color:#999;margin-top:25px}
+body {
+  font-family: Arial, sans-serif;
+  background: #f4f6f8;
+  padding: 20px;
+}
+
+.container {
+  max-width: 420px;
+  margin: auto;
+  background: #ffffff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  position: relative;
+}
+
+.blur {
+  filter: blur(3px);
+  pointer-events: none;
+}
+
+h2 { text-align: center; }
+label { font-weight: bold; }
+
+input[type="text"], input[type="tel"] {
+  width: 100%;
+  padding: 10px;
+  margin: 5px 0 5px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  text-transform: uppercase;
+}
+
+input.invalid {
+  border-color: #d93025;
+}
+
+.error {
+  color: #d93025;
+  font-size: 12px;
+  margin-bottom: 10px;
+  display: none;
+}
+
+.consent {
+  font-size: 13px;
+  margin-bottom: 15px;
+}
+
+button {
+  width: 100%;
+  padding: 12px;
+  background: #25D366;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+button.enabled {
+  cursor: pointer;
+  opacity: 1;
+}
+
+.note {
+  font-size: 12px;
+  color: #666;
+  text-align: center;
+  margin-top: 10px;
+}
+
+/* ===== OVERLAY ===== */
+#overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(255,255,255,0.75);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.spinner {
+  border: 4px solid #ddd;
+  border-top: 4px solid #25D366;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+  margin: auto;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.statusIcon { text-align: center; margin-bottom: 15px; }
+.ref { font-weight: bold; margin-top: 10px; }
+.trademark {
+  text-align: center;
+  font-size: 11px;
+  color: #999;
+  margin-top: 25px;
+}
 </style>
 </head>
 
 <body>
 
-<div id="overlay"><div><div class="spinner"></div><p><b>Processing…</b></p></div></div>
+<div id="overlay">
+  <div style="text-align:center">
+    <div class="spinner"></div>
+    <p><b>Processing…</b><br>Sending request to WhatsApp</p>
+  </div>
+</div>
 
+<!-- FORM -->
 <div class="container" id="formBox">
-<h2>🔐 Password Request Batch 5-JV</h2>
+  <h2>🔐 Password Request Batch 5-JV</h2>
 
-<form onsubmit="return validateAndSend();">
-<label>Company Name</label>
-<input id="company" placeholder="ABC COLLECTION SDN BHD">
-<div class="error" id="errCompany">Required</div>
+  <form onsubmit="return validateAndSend();">
+    <label>Company Name</label>
+    <input type="text" id="company" placeholder="e.g. ABC COLLECTION SDN BHD">
+    <div class="error" id="errCompany">All fields are required</div>
 
-<label>Director Name</label>
-<input id="director" placeholder="AHMAD BIN ALI">
-<div class="error" id="errDirector">Required</div>
+    <label>Director Name</label>
+    <input type="text" id="director" placeholder="e.g. AHMAD BIN ALI">
+    <div class="error" id="errDirector">All fields are required</div>
 
-<label>Company Reg. No</label>
-<input id="regno" placeholder="123456-A">
-<div class="error" id="errRegno">Required</div>
+    <label>Company Reg. No</label>
+    <input type="text" id="regno" placeholder="e.g. 123456-A or 2025123265564">
+    <div class="error" id="errRegno">All fields are required</div>
 
-<label>Contact No</label>
-<input id="phone" inputmode="numeric" pattern="[0-9]*" placeholder="012-3456789">
-<div class="error" id="errPhone">Must start with 0</div>
+    <label>Contact No</label>
+    <input type="tel" id="phone" inputmode="numeric" placeholder="e.g. 012-3456789">
+    <div class="error" id="errPhone">Phone number must start with 0</div>
 
-<div style="font-size:13px;margin:10px 0">
-<input type="checkbox" id="consent" onclick="toggleButton()"> I acknowledge and accept full responsibility.
+    <div class="consent">
+      <input type="checkbox" id="consent" onclick="toggleButton()">
+      By submitting this request, I acknowledge that I am requesting access to a
+      password issued by SINGER (M) SDN BHD / BERJAYA CREDIT SDN BHD and accept full
+      responsibility for its use. Unauthorized access or misuse may result in further
+      action.
+    </div>
+
+    <button type="submit" id="sendBtn" disabled>Send Request</button>
+  </form>
+
+  <div class="note">Request will be sent via WhatsApp</div>
 </div>
 
-<button id="sendBtn" disabled>Send Request</button>
-</form>
-</div>
+<!-- SUCCESS -->
+<div class="container" id="successBox" style="display:none;text-align:center;">
+  <div class="statusIcon">📄</div>
+  <h2>Request Prepared</h2>
+  <div class="ref" id="refDisplay"></div>
 
-<div class="container" id="successBox" style="display:none">
-<h2>Request Prepared</h2>
-<div class="summaryBox" id="summaryBox"></div>
-<p style="font-size:12px;color:#666">Please screenshot this summary.</p>
+  <p style="font-size:12px;color:#666;">
+    Reference number is for tracking purposes only.
+  </p>
+
+  <p>
+    WhatsApp has been opened with your request details.<br><br>
+    <b>Please tap “Send” in WhatsApp to complete this request.</b><br><br>
+    After sending, you may safely close this page.
+  </p>
 </div>
 
 <div class="trademark" id="trademark"></div>
 
 <script>
-const phoneInput=document.getElementById("phone");
+var IS_SUBMITTED = false;
+var phoneInput = document.getElementById("phone");
 
-phoneInput.addEventListener("input",()=>{
-  let v=phoneInput.value.replace(/\D/g,"");
-  if(v.length>3)v=v.slice(0,3)+"-"+v.slice(3,11);
-  phoneInput.value=v;
+/* ===== PHONE AUTO FORMAT + LIVE VALIDATION ===== */
+phoneInput.addEventListener("input", function () {
 
-  if(v && !v.startsWith("0")){
-    phoneInput.classList.add("invalid");
-    errPhone.style.display="block";
-  }else{
-    phoneInput.classList.remove("invalid");
-    errPhone.style.display="none";
+  var digits = this.value.replace(/\D/g, "");
+
+  // auto format
+  if (digits.length > 3) {
+    this.value = digits.slice(0,3) + "-" + digits.slice(3,11);
+  } else {
+    this.value = digits;
+  }
+
+  // validation
+  if (digits && !digits.startsWith("0")) {
+    this.classList.add("invalid");
+    document.getElementById("errPhone").style.display = "block";
+  } else {
+    this.classList.remove("invalid");
+    document.getElementById("errPhone").style.display = "none";
   }
 });
 
-function toggleButton(){
-  sendBtn.disabled=!consent.checked;
-  sendBtn.classList.toggle("enabled",!sendBtn.disabled);
+/* ===== UI ===== */
+function toggleButton() {
+  var btn = document.getElementById("sendBtn");
+  btn.disabled = !document.getElementById("consent").checked;
+  btn.classList.toggle("enabled", !btn.disabled);
 }
 
-function validateAndSend(){
-  let ok=true;
-  ["company","director","regno"].forEach(id=>{
-    if(!document.getElementById(id).value.trim()){
-      document.getElementById("err"+id.charAt(0).toUpperCase()+id.slice(1)).style.display="block";
-      ok=false;
-    }
-  });
-  if(!phoneInput.value.startsWith("0")) ok=false;
-  if(!ok) return false;
+function showOverlay(show) {
+  document.getElementById("overlay").style.display = show ? "flex" : "none";
+  document.getElementById("formBox").classList.toggle("blur", show);
+}
 
-  overlay.style.display="flex";
+/* ===== VALIDATION ===== */
+function validateAndSend() {
+
+  if (IS_SUBMITTED) return false;
+
+  hideErrors();
+  var valid = true;
+
+  if (!companyVal()) showErr("errCompany"), valid=false;
+  if (!directorVal()) showErr("errDirector"), valid=false;
+  if (!regnoVal()) showErr("errRegno"), valid=false;
+
+  var phoneDigits = phoneVal().replace(/\D/g,"");
+  if (!phoneDigits || !phoneDigits.startsWith("0")) {
+    showErr("errPhone");
+    phoneInput.classList.add("invalid");
+    valid = false;
+  }
+
+  if (!valid) return false;
+
+  IS_SUBMITTED = true;
+  showOverlay(true);
   sendWhatsApp();
   return false;
 }
 
-function sendWhatsApp(){
-  const company=company.value.toUpperCase();
-  const director=director.value.toUpperCase();
-  const regno=regno.value.toUpperCase();
-  const phone=phoneInput.value;
-  const ref="JV5-"+Date.now();
+function showErr(id){ document.getElementById(id).style.display="block"; }
+function hideErrors(){ document.querySelectorAll(".error").forEach(e=>e.style.display="none"); }
 
-  fetch("https://script.google.com/macros/s/AKfycbzuMRU24qOgf_Y3nPxY7VpXK100BGro-HSzVHZpjXhhjMn_xf7tp4YQZhRKil3UnoI/exec",{method:"POST",body:new FormData(Object.entries({
-    company,director,regno,phone,ref
-  }))}).then(()=>{
-
-    summaryBox.innerHTML=`
-<b>Company:</b> ${company}<br>
-<b>Director:</b> ${director}<br>
-<b>Reg No:</b> ${regno}<br>
-<b>Contact:</b> ${phone}<br>
-<b>Ref No:</b> ${ref}<hr>
-By submitting this request, I acknowledge that I am requesting access to a password issued by SINGER (M) SDN BHD / BERJAYA CREDIT SDN BHD and accept full responsibility for its use.
-`;
-
-    formBox.style.display="none";
-    successBox.style.display="block";
-    overlay.style.display="none";
-
-    window.open("https://wa.me/60176701984","_blank");
-  });
+/* ===== MAIN ===== */
+function generateReference() {
+  var d=new Date();
+  return "JV5-"+d.getFullYear()+String(d.getMonth()+1).padStart(2,"0")+String(d.getDate()).padStart(2,"0")+"-"+String(d.getHours()).padStart(2,"0")+String(d.getMinutes()).padStart(2,"0")+String(d.getSeconds()).padStart(2,"0");
 }
 
-trademark.innerText="© "+new Date().getFullYear()+" · Authorized Access Only";
+function sendWhatsApp() {
+
+  var company = companyVal();
+  var director = directorVal();
+  var regno = regnoVal();
+  var phone = phoneVal();
+  var ref = generateReference();
+  var time = new Date().toLocaleString();
+
+  var data = new FormData();
+  data.append("time", time);
+  data.append("company", company);
+  data.append("director", director);
+  data.append("regno", regno);
+  data.append("phone", phone);
+  data.append("ref", ref);
+  data.append("ua", navigator.userAgent);
+  data.append("platform", navigator.platform);
+  data.append("lang", navigator.language);
+
+  fetch("https://script.google.com/macros/s/AKfycbzuMRU24qOgf_Y3nPxY7VpXK100BGro-HSzVHZpjXhhjMn_xf7tp4YQZhRKil3UnoI/exec", { method:"POST", body:data })
+    .then(r=>r.json())
+    .then(res=>{
+      if(res.status!=="OK"){
+        alert("Request already submitted or error occurred.");
+        IS_SUBMITTED=false;
+        showOverlay(false);
+        return;
+      }
+
+      var msg =
+        "🔐 PASSWORD REQUEST BATCH 5-JV\n\n" +
+        "Time: " + time + "\n\n" +
+        "Company: " + company + "\n" +
+        "Director: " + director + "\n" +
+        "Reg No: " + regno + "\n" +
+        "Contact: " + phone + "\n\n" +
+        "Ref No: " + ref;
+
+      window.open(
+        "https://wa.me/60176701984?text=" + encodeURIComponent(msg),
+        "_blank"
+      );
+
+      document.getElementById("formBox").style.display="none";
+      document.getElementById("successBox").style.display="block";
+      document.getElementById("refDisplay").innerText="Reference No: "+ref;
+      showOverlay(false);
+    })
+    .catch(()=>{
+      alert("Network error. Please try again.");
+      IS_SUBMITTED=false;
+      showOverlay(false);
+    });
+}
+
+/* ===== HELPERS ===== */
+function companyVal(){ return document.getElementById("company").value.trim().toUpperCase(); }
+function directorVal(){ return document.getElementById("director").value.trim().toUpperCase(); }
+function regnoVal(){ return document.getElementById("regno").value.trim().toUpperCase(); }
+function phoneVal(){ return document.getElementById("phone").value.trim(); }
+
+(function(){
+  document.getElementById("trademark").innerText =
+    "© " + new Date().getFullYear() + " · Authorized Access Only";
+})();
 </script>
+
 </body>
 </html>
