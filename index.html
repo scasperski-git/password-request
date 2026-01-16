@@ -436,8 +436,24 @@ function showErr(id){ document.getElementById(id).style.display="block"; }
 function hideErrors(){ document.querySelectorAll(".error").forEach(e=>e.style.display="none"); }
 
 function generateReference() {
-  var d=new Date();
-  return "JV5-"+d.getFullYear()+String(d.getMonth()+1).padStart(2,"0")+String(d.getDate()).padStart(2,"0")+"-"+String(d.getHours()).padStart(2,"0")+String(d.getMinutes()).padStart(2,"0")+String(d.getSeconds()).padStart(2,"0");
+  var d = new Date();
+
+  // FIRST WORD company
+  var comp = document.getElementById("company").value
+    .trim()
+    .split(/\s+/)[0]            // ambil perkataan pertama
+    .replace(/[^A-Z0-9]/gi,"")  // buang simbol
+    .toUpperCase();
+
+  if(!comp) comp = "XXX"; // fallback
+
+  return comp + "-JV5-"
+    + d.getFullYear()
+    + String(d.getMonth()+1).padStart(2,"0")
+    + String(d.getDate()).padStart(2,"0") + "-"
+    + String(d.getHours()).padStart(2,"0")
+    + String(d.getMinutes()).padStart(2,"0")
+    + String(d.getSeconds()).padStart(2,"0");
 }
 
 function sendWhatsApp() {
@@ -510,22 +526,3 @@ function phoneVal(){return document.getElementById("phone").value.trim();}
 
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
